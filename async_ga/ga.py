@@ -209,14 +209,19 @@ class AsyncGA(Crosser[T], Filter[T], FitnessFunction[T], Maturity[T], Mutator[T]
                 await asyncio.sleep(0)
             await asyncio.sleep(0)
 
-    async def evolve(self: AsyncGA[T], /) -> AsyncIterator[Population[T]]:
+    async def evolve(self: AsyncGA[T], /, population: Optional[Population[T]] = None) -> AsyncIterator[Population[T]]:
         self._tasks = set()
-        try:
-            # Get the starting population.
+        # Get the starting population.
+        if population is None:
             population = [
                 await self.create_chromosome(chromosome)
                 async for chromosome in self.initial_population()
             ]
+        else:
+            # Restart fitness estimates for the population.
+            for i, chromosome in enumerate(population):
+                population[i] = await self.create_chromosome(chromosome)
+        try:
             population.sort(key=lambda chromosome: chromosome.fitness.mean)
             await self.setup(population)
             yield population
@@ -239,9 +244,9 @@ class AsyncGA(Crosser[T], Filter[T], FitnessFunction[T], Maturity[T], Mutator[T]
             await asyncio.gather(*self._tasks)
             self._tasks.clear()
 
-    async def main(self: AsyncGA[T], /) -> Population[T]:
+    async def main(self: AsyncGA[T], /, population: Optional[Population[T]] = None) -> Population[T]:
         """Returns the last population from `self.evolve()`."""
-        iterator = self.evolve().__aiter__()
+        iterator = self.evolve(population).__aiter__()
         try:
             async for population in iterator:
                 pass
@@ -249,9 +254,9 @@ class AsyncGA(Crosser[T], Filter[T], FitnessFunction[T], Maturity[T], Mutator[T]
         finally:
             iterator.aclose()
 
-    def run(self: AsyncGA[T], /) -> Population[T]:
+    def run(self: AsyncGA[T], /, population: Optional[Population[T]] = None) -> Population[T]:
         """Shortcut for `asyncio.run(self.main())`."""
-        return asyncio.run(self.main())
+        return asyncio.run(self.main(population))
 
 
 class DefaultGA(
