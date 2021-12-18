@@ -1,12 +1,14 @@
 """
 A python package for asynchronous genetic algorithms.
 
-For example, if a chromosome's fitness is repeatedly estimateable,
-but its exact value cannot be computed, or if a chromosome is
-changing over time, then AsyncGA will be able to concurrently
-update the estimate of the chromosome's fitness while evolving.
+Motivation:
+    If a chromosome's fitness is repeatedly estimateable, but
+    its exact value cannot be computed, or if a chromosome is
+    changing over time, then AsyncGA will be able to concurrently
+    update the estimate of the chromosome's fitness while evolving.
 
 For usage, see `help(async_ga.AsyncGA)`.
+For an example, see `help(async_ga.DefaultGA)`.
 """
 from async_ga.chromosome import *
 from async_ga.crosser import *
