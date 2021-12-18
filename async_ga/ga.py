@@ -225,14 +225,12 @@ class AsyncGA(Crosser[T], Filter[T], FitnessFunction[T], Maturity[T], Mutator[T]
                 # Add to the population.
                 async for child in self._generate_children(parent1, parent2):
                     child.is_active = False
-                    population.extend([
-                        mutation
-                        async for mutation in self._generate_mutations(child)
-                    ])
-                population.sort(key=lambda chromosome: chromosome.fitness.mean)
-                # Kill those that couldn't survive and stop computing their fitnesses.
-                async for chromosome in self.filter_nonsurvivors(population):
-                    chromosome.is_active = False
+                    async for mutation in self._generate_mutations(child):
+                        population.append(mutation)
+                        population.sort(key=lambda chromosome: chromosome.fitness.mean)
+                        # Kill those that couldn't survive and stop computing their fitnesses.
+                        async for chromosome in self.filter_nonsurvivors(population):
+                            chromosome.is_active = False
                 yield population
         finally:
             # Finish computing the fitnesses.
