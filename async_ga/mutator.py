@@ -1,6 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from async_ga.chromosome import Chromosome
+from math import sqrt
 import random
 from typing import AsyncIterable, AsyncIterator, Generic, Iterable, TypeVar, Union
 
@@ -38,13 +39,14 @@ class GeneMutator(Mutator[T], Generic[T]):
 
 class NoiseMutator(Mutator[float]):
     """Add gaussian noise to random genes."""
-    repeat: int = 1
     deviation: float = 1.0
+    iteration: int = 0
+    repeat: int = 1
 
     async def mutate(self: NoiseMutator, chromosome: Chromosome[float]) -> AsyncIterator[Chromosome[float]]:
-        """Add gaussian noise to random genes."""
+        """Add gaussian noise to random genes. The noise decays by a factor of 1 / sqrt(iteration)."""
         for _ in range(self.repeat):
-            chromosome[random.randrange(len(chromosome))] += random.gauss(0, self.deviation)
+            chromosome[random.randrange(len(chromosome))] += random.gauss(0, self.deviation) / sqrt(self.iteration)
             yield chromosome
         async for mutation in super().mutate(chromosome):
             yield mutation
