@@ -279,12 +279,16 @@ class DefaultGA(
         >>> print(population[0].fitness.mean)
 
     For more advanced running:
-        >>> async def main():
+        >>> async def get_best_chromosome():
         ...     ga = DefaultGA()
         ...     async for population in ga.evolve():
         ...         print(population[0].fitness.mean)
+        ...     return population[0]
         ...
-        >>> asyncio.run(main())
+        >>> chromosome = asyncio.run(get_best_chromosome())
+          ...
+        >>> print(chromosome)
+          ...
 
     Default Methods
     ----------------
