@@ -7,8 +7,23 @@ Motivation:
     changing over time, then AsyncGA will be able to concurrently
     update the estimate of the chromosome's fitness while evolving.
 
+### Usage
 For usage, see `help(async_ga.AsyncGA)`.
-For an example, see `help(async_ga.DefaultGA)`.
+
+### Example
+For the example documentation, see `help(async_ga.DefaultGA)`.
+    >>> from async_ga import DefaultGA
+    >>> import asyncio
+    >>> async def get_best_chromosome():
+    ...     ga = DefaultGA()
+    ...     async for population in ga.evolve():
+    ...         print(population[0].fitness.mean)
+    ...     return population[0]
+    ...
+    >>> chromosome = asyncio.run(get_best_chromosome())
+      ...
+    >>> print(chromosome)
+      ...
 """
 from async_ga.chromosome import *
 from async_ga.crosser import *
