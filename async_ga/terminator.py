@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from time import time
 from typing import Any, Generic, TypeVar
 
-__all__ = ["Terminator"]
+__all__ = ["Terminator", "MaxIteration", "TimeLimit"]
 
 T = TypeVar("T")
 
